@@ -1,9 +1,14 @@
 const async = require('async');
 const QRCode = require('qrcode');
 
+const accountSid = 'ACb295cf1db483f62b7508d436b9944211';
+const authToken = '6d745331bc59b1260f711a3007fd3471';
+const twilioClient = require('twilio')(accountSid, authToken);
+
 
 const AWS = require('aws-sdk');
 const env = require('../../../environments/environment');
+
 AWS.config.update({
     accessKeyId: env.AWS_KEY_ID,
     secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
@@ -13,8 +18,39 @@ AWS.config.update({
 var s3Bucket = new AWS.S3( { params: {Bucket: 'orientation-qr-codes'} } );
 
 module.exports = {
+
+    // send single message to given number - link is link to the qr code image on s3
+    async sendText(link, number){
+        twilioClient.messages.setTimeout
+        console.log('what is going on');
+        twilioClient.messages.create({
+            body: 'hi',
+            from: '+16573065608',
+            to: number,
+            mediaUrl: link
+        })
+        .then(message => {
+            console.log(message.sid);
+            console.log('hi');
+        });
+    },
+
+
+    async sleep(ms){
+        return new Promise(resolve=>{
+            setTimeout(resolve,ms)
+        })
+    },
+
+
+
+
+
+
+
+    // create all qr codes & post them on s3 bucket
     async generateLinks(studentData){
-        var N = 10; 
+        var N = 71; 
         let numbers = Array.apply(null, {length: N}).map(Number.call, Number);
         
         objects = [];

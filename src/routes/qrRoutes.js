@@ -1,38 +1,64 @@
 const express = require('express');
 const router = express.Router();
-const async = require('async');
 
-var QRCode = require('qrcode');
-// Download the helper library from https://www.twilio.com/docs/node/install
-// Your Account Sid and Auth Token from twilio.com/console
-// DANGER! This is insecure. See http://twil.io/secure
-const accountSid = 'ACb295cf1db483f62b7508d436b9944211';
-const authToken = '6d745331bc59b1260f711a3007fd3471';
-const twilioClient = require('twilio')(accountSid, authToken);
-
-const codeGenerator = require('../_services/helpers/qrGenerator.pipe');
-
-
-
+const qrCodeGenerator = require('../_services/helpers/qrGenerator.pipe');
 
 
 router.post('/generate-qr-codes', async (req, res, next) => {
-    codeGenerator.generateLinks();
-    req.res('Done generation');
+    qrCodeGenerator.generateLinks();
 });
 
-
-
 router.post('/send-qr-codes', async (req, res, next) => {
-    
     // get applicant data from database:
     let data = [
         {id: 1, phone: '+17143603237'},
         {id: 2, phone: '+13233975154'}
     ]
 
+    for (i = 0; i < data.length; i++){
+        let link = 'https://orientation-qr-codes.s3.us-west-1.amazonaws.com/'+data[i].id;
+        console.log(data[i].phone);
+        qrCodeGenerator.sendText(link, data[i].phone);
+
+        await qrCodeGenerator.sleep(7000);
+    }
+});
 
 
+module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * twilioClient.messages.create({
+        body: 'hi',
+        from: '+16573065608',
+        to: '+17143603237',
+    })
+    .then(message => {
+        console.log(message.sid);
+        console.log('hi');
+        res.send('finished');
+    });
+ */
+
+
+
+
+
+   /**
+     * 
+     
     async.eachSeries(data, function(keyValue, cb) {
         let link = 'https://orientation-qr-codes.s3.us-west-1.amazonaws.com/'+keyValue.id;
 
@@ -56,16 +82,16 @@ router.post('/send-qr-codes', async (req, res, next) => {
                 console.log(uploadedInfo.Location);
                 cb();
             }
-            */
+           
         });
-
+       
 
         /**
         .then(message => {
             console.log(message.sid);
             console.log('hi');
             cb();
-        }); */
+        }); 
     }, function(err, results) {
         if (err) console.log('one of the uploads failed')
         else {
@@ -73,7 +99,7 @@ router.post('/send-qr-codes', async (req, res, next) => {
         }
     });
 
-
+*/
 
 
 
@@ -97,25 +123,3 @@ router.post('/send-qr-codes', async (req, res, next) => {
         
     }
      */
-});
-
-
-module.exports = router;
-
-
-
-
-
-
-/**
- * twilioClient.messages.create({
-        body: 'hi',
-        from: '+16573065608',
-        to: '+17143603237',
-    })
-    .then(message => {
-        console.log(message.sid);
-        console.log('hi');
-        res.send('finished');
-    });
- */
