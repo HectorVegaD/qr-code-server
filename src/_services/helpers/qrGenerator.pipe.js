@@ -1,13 +1,11 @@
 const async = require('async');
 const QRCode = require('qrcode');
+const env = require('../../../environments/environment');
 
-const accountSid = 'ACb295cf1db483f62b7508d436b9944211';
-const authToken = '6d745331bc59b1260f711a3007fd3471';
-const twilioClient = require('twilio')(accountSid, authToken);
+const twilioClient = require('twilio')(env.accountSid, env.authToken);
 
 
 const AWS = require('aws-sdk');
-const env = require('../../../environments/environment');
 
 AWS.config.update({
     accessKeyId: env.AWS_KEY_ID,

@@ -20,7 +20,7 @@ router.post('/send-qr-codes', async (req, res, next) => {
         console.log(data[i].phone);
         qrCodeGenerator.sendText(link, data[i].phone);
 
-        await qrCodeGenerator.sleep(7000);
+        await qrCodeGenerator.sleep(2000);
     }
 });
 
